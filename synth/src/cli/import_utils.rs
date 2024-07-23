@@ -117,7 +117,7 @@ where
         let primary_keys = task::block_on(get_primary_keys(datasource, table_name.to_string()))?;
 
         if primary_keys.len() > 1 {
-            bail!(
+            warn!(
                 "{} primary keys found at collection {}. Synth does not currently support \
             composite primary keys.",
                 primary_keys.len(),
@@ -231,7 +231,9 @@ where
             table_name.to_string(),
         ))?;
         let json_values: Vec<Value> = values.into_iter().map(synth_val_to_json).collect();
-        namespace.try_update(OptionalMergeStrategy, table_name, &Value::from(json_values))?;
+        if let Err(e) = namespace.try_update(OptionalMergeStrategy, table_name, &Value::from(json_values)) {
+            error!("Failed to update namespace {table_name} with values: {:?}", e);
+        }
     }
 
     Ok(())

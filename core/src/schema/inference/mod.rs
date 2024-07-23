@@ -71,9 +71,9 @@ impl MergeStrategy<Content, Value> for OptionalMergeStrategy {
             (Content::Null(_), Value::Null) => Ok(()),
             (master, candidate) => Err(failed!(
                 target: Release,
-                "cannot merge a node of type '{}' with a value of type '{}'",
-                master.kind(),
-                candidate.kind()
+                "cannot merge a node of type '{:?}' with a value of type '{:?}'",
+                master,
+                candidate
             )),
         }
     }
